@@ -2,8 +2,9 @@
 
 body {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  /*justify-content: center;*/
+  align-items: center;
   height: 100vh;
   width: 100%;
   margin: 0;
@@ -60,7 +61,7 @@ body {
 .title::after {
   width: 18px;
   height: 18px;
-  background-color: royalblue;
+  animation: pulse 1s linear infinite;
 }
 
 .message {
@@ -69,8 +70,47 @@ body {
 
 .flex {
   display: flex;
+  justify-content: center;
   width: 100%;
   gap: 6px;
+}
+
+.tabela {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  height: 100vh;
+  width: 100vh;
+  opacity: 80%;
+  margin-top: 2rem;
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: left;
+  text-size-adjust: 0;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th,
+td,
+table {
+  padding: 1rem;
+  border: 1px solid black;
+}
+
+.icones {
+  text-align: center;
+}
+
+.icones:hover {
+  background-color: rgba(211, 231, 255, 0.707);
+}
+
+img {
+  width: auto;
+  height: 30px;
 }
 
 .form label {
