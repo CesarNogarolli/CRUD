@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CRUD</title>
     <link rel="stylesheet" href="style.css" />
-    <script text="text/javascript" src="script.js"></script>
+    <script defer text="text/javascript" src="script.js"></script>
   </head>
 
   <body>
@@ -22,21 +22,44 @@
             type="text"
             class="input"
             style="width: 110px"
+            id="nome"
+            onchange="addNome()"
           />
           <span>Nome</span>
         </label>
         <label>
-          <input required placeholder="" type="text" class="input" />
+          <input
+            required
+            placeholder=""
+            type="text"
+            class="input"
+            id="sobrenome"
+            onchange="addSobrenome()"
+          />
           <span>Sobrenome</span>
         </label>
       </div>
 
       <label>
-        <input required placeholder="" type="tex" class="input" />
+        <input
+          required
+          placeholder=""
+          type="tex"
+          class="input"
+          id="fantasia"
+          onchange="addFantasia()"
+        />
         <span>Fantasia</span>
       </label>
       <label>
-        <input required placeholder="" type="tex" class="input" />
+        <input
+          required
+          placeholder=""
+          type="tex"
+          class="input"
+          id="local"
+          onchange="addLocal()"
+        />
         <span>Local</span>
       </label>
 
