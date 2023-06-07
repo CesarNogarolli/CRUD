@@ -2,6 +2,7 @@ let nameHero, surnameHero, fantasy, locale;
 let urlPadrao = "http://localhost:5156/Personagens";
 
 const formulario = document.querySelector(".form");
+// Recebe os valores do formulário
 const inputNome = document.getElementById("nome");
 const inputSobrenome = document.getElementById("sobrenome");
 const inputFantasia = document.getElementById("fantasia");
@@ -9,18 +10,23 @@ const inputLocal = document.getElementById("local");
 
 function addNome() {
   nameHero = inputNome.value;
+  nameHero = nameHero[0].toUpperCase() + nameHero.substring(1).toLowerCase();
 }
 
 function addSobrenome() {
   surnameHero = inputSobrenome.value;
+  surnameHero =
+    surnameHero[0].toUpperCase() + surnameHero.substring(1).toLowerCase();
 }
 
 function addFantasia() {
   fantasy = inputFantasia.value;
+  fantasy = fantasy[0].toUpperCase() + fantasy.substring(1).toLowerCase();
 }
 
 function addLocal() {
   locale = inputLocal.value;
+  locale = locale[0].toUpperCase() + locale.substring(1).toLowerCase();
 }
 
 formulario.addEventListener("submit", (evento) => {
@@ -56,28 +62,51 @@ const registrar = async () => {
 
   let options = {
     method: "POST",
-    Headers: {
+    headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(dadosfinais),
   };
 
-  fetch(urlPadrao, options)
+  await fetch(urlPadrao, options)
     .then((Resp) => {
-      Resp.json();
+      return Resp.json();
     })
     .then((dados) => {
       renderiza(dados);
     })
     .catch((error) => {
       alert(error.toString());
+    })
+    .finally(() => {
+      formulario.reset();
+    });
+};
+
+const excluirHeroi = async (id) => {
+  let options = {
+    method: "DELETE",
+  };
+
+  await fetch(urlPadrao + "/" + id, options)
+    .then((resp) => {
+      console.log(options);
+      return resp.json();
+    })
+    .then((dados) => {
+      renderiza(dados);
+    })
+    .catch(() => {
+      alert("Não foi possivel excluir.");
     });
 };
 
 const renderiza = (dados) => {
   if (!dados) {
     const div = document.getElementById("tabela");
-    div.style.display = "none";
+    if (div) {
+      div.style.display = "none";
+    }
   } else {
     let table = document.getElementById("tabelaHerois");
     while (table.firstChild) {
@@ -126,7 +155,7 @@ const renderiza = (dados) => {
 
       let excluir = document.createElement("img");
       excluir.onclick = function () {
-        alert("Excluindo o herói de id " + heroi.id);
+        excluirHeroi(heroi.id);
       };
 
       editar.src = "img/editar.png";
@@ -150,3 +179,8 @@ const renderiza = (dados) => {
 };
 
 buscaHerois();
+
+/*
+  Quando clicar em adicionar, a primeira letra do nome sempre deve ser em maiúsculo.
+  Após inserir o registro os campos devem ficar em branco.
+*/
