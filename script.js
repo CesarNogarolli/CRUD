@@ -1,4 +1,4 @@
-let nameHero, surnameHero, fantasy, locale;
+let nameHero, surnameHero, fantasy, locale, idEdicao;
 let urlPadrao = "http://localhost:5156/Personagens";
 
 const formulario = document.querySelector(".form");
@@ -7,6 +7,7 @@ const inputNome = document.getElementById("nome");
 const inputSobrenome = document.getElementById("sobrenome");
 const inputFantasia = document.getElementById("fantasia");
 const inputLocal = document.getElementById("local");
+const botao = document.getElementById("botao");
 
 function addNome() {
   nameHero = inputNome.value;
@@ -31,11 +32,16 @@ function addLocal() {
 
 formulario.addEventListener("submit", (evento) => {
   evento.preventDefault();
-  registrar();
+
+  if (botao.innerHTML.toString() == "Cadastrar") {
+    registrar();
+  } else {
+    editando();
+  }
 });
 
 const fetchRPG = async (id) => {
-  const url = !id ? urlPadrao : `${urlPadrao}/${id}`;
+  const url = !id || id == 0 ? urlPadrao : `${urlPadrao}/${id}`;
 
   const APIresponse = await fetch(url);
 
@@ -45,12 +51,14 @@ const fetchRPG = async (id) => {
   }
 };
 
-const buscaHerois = async () => {
-  const dados = await fetchRPG();
+//GET
+const buscaHerois = async (id) => {
+  const dados = await fetchRPG(id);
 
   if (dados) renderiza(dados);
 };
 
+//POST
 const registrar = async () => {
   let dadosfinais = {
     id: 0,
@@ -83,6 +91,51 @@ const registrar = async () => {
     });
 };
 
+//PUT
+const editaHeroi = async (id) => {
+  const dados = await fetchRPG(id);
+  inputNome.value = dados.nome;
+  inputSobrenome.value = dados.sobrenome;
+  inputFantasia.value = dados.fantasia;
+  inputLocal.value = dados.local;
+  idEdicao = dados.id;
+
+  botao.innerText = "Editar";
+};
+
+const editando = async () => {
+  let dadosfinais = {
+    id: idEdicao, //deve funcionar com zero tbm
+    nome: inputNome.value.toString(),
+    sobrenome: inputSobrenome.value.toString(),
+    fantasia: inputFantasia.value.toString(),
+    local: inputLocal.value.toString(),
+  };
+
+  let options = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dadosfinais),
+  };
+
+  await fetch(urlPadrao + "/" + idEdicao, options)
+    .then((resp) => {
+      if (resp.ok) {
+        buscaHerois();
+      }
+    })
+    .catch((e) => {
+      alert("Erro de pecinha " + e);
+    })
+    .finally(() => {
+      formulario.reset();
+      botao.innerHTML = "Cadastrar";
+    });
+};
+
+//DELETE
 const excluirHeroi = async (id) => {
   let options = {
     method: "DELETE",
@@ -90,24 +143,30 @@ const excluirHeroi = async (id) => {
 
   await fetch(urlPadrao + "/" + id, options)
     .then((resp) => {
-      console.log(options);
       return resp.json();
     })
     .then((dados) => {
+      console.log(dados);
       renderiza(dados);
     })
-    .catch(() => {
-      alert("Não foi possivel excluir.");
+    .catch((e) => {
+      console.log(e);
     });
 };
 
 const renderiza = (dados) => {
-  if (!dados) {
+  if (!dados || dados.length == 0) {
     const div = document.getElementById("tabela");
     if (div) {
       div.style.display = "none";
     }
   } else {
+    const div = document.getElementById("tabela");
+
+    if (div) {
+      div.style.display = "block";
+    }
+
     let table = document.getElementById("tabelaHerois");
     while (table.firstChild) {
       table.removeChild(table.firstChild);
@@ -150,7 +209,7 @@ const renderiza = (dados) => {
 
       let editar = document.createElement("img");
       editar.onclick = function () {
-        alert("Editando o herói de id " + heroi.id);
+        editaHeroi(heroi.id);
       };
 
       let excluir = document.createElement("img");
